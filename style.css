@@ -18,7 +18,7 @@ body {
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 70px;
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -27,6 +27,18 @@ body {
     color: cyan;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     text-transform: uppercase;
+    margin-bottom: 50px;
+    font-size: 52px;
+    font-weight: bold;
+    letter-spacing: 5px;
+    text-align: center;
+
+    /* Efek Bayangan Dasar (Glow) */
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8),
+        0 0 20px rgba(0, 255, 255, 0.4);
+
+    /* Animasi: durasi diperlambat menjadi 3 detik untuk kehalusan */
+    animation: neon-glow-smooth 3s infinite ease-in-out;
 }
 
 .timer {
@@ -39,12 +51,35 @@ body {
 
 canvas {
     border: 2px solid cyan;
-    box-shadow: 0 0 40px rgba(0, 255, 255, 0.25);
+    /* Blur radius diperbesar ke 80px dan ditambahkan spread radius 10px */
+    box-shadow: 0 0 80px 10px rgba(0, 255, 255, 0.4);
     border-radius: 16px;
     transition: box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
 canvas:hover {
-    box-shadow: 0 0 60px rgba(0, 255, 255, 0.4);
-    border-color: rgba(0, 255, 255, 0.9);
+    /* Efek saat kursor di atas canvas agar terlihat lebih menyala */
+    box-shadow: 0 0 120px 20px rgba(0, 255, 255, 0.6);
+    border-color: rgba(0, 255, 255, 1);
+}
+
+
+/* Definisi Animasi yang Lebih Halus */
+@keyframes neon-glow-smooth {
+
+    0%,
+    100% {
+        /* Kondisi Paling Terang */
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.8),
+            0 0 20px rgba(0, 255, 255, 0.4),
+            0 0 40px rgba(0, 255, 255, 0.6);
+        opacity: 1;
+    }
+
+    50% {
+        /* Kondisi Meredup Perlahan */
+        text-shadow: 0 0 5px rgba(0, 255, 255, 0.4),
+            0 0 10px rgba(0, 255, 255, 0.2);
+        opacity: 0.7;
+    }
 }

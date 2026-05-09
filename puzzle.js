@@ -185,13 +185,13 @@ function draw() {
             }
 
             // Visual bantuan (hanya saat membuat frame)
-            if (puzzlePieces.length === 0) {
-                noStroke();
-                fill(0, 255, 0); // Telunjuk: Hijau
-                circle((1 - index.x) * width, index.y * height, 12);
-                fill(255, 0, 255); // Jari Tengah: Ungu
-                circle((1 - middle.x) * width, middle.y * height, 12);
-            }
+            // if (puzzlePieces.length === 0) {
+            //     noStroke();
+            //     fill(0, 255, 0); // Telunjuk: Hijau
+            //     circle((1 - index.x) * width, index.y * height, 12);
+            //     fill(255, 0, 255); // Jari Tengah: Ungu
+            //     circle((1 - middle.x) * width, middle.y * height, 12);
+            // }
         }
     }
 
@@ -407,9 +407,9 @@ function drawGameOver(isPinching, px, py) {
     let btnW = 200, btnH = 60;
     let btnX = width / 2 - btnW / 2;
     let btnY = height / 2 + 10;
-    fill(255);
+    fill(0, 0, 0, 50);
     rect(btnX, btnY, btnW, btnH, 10);
-    fill(0);
+    fill(255);
     textSize(24);
     textAlign(CENTER, CENTER);
     text("RESTART", btnX + btnW / 2, btnY + btnH / 2);
