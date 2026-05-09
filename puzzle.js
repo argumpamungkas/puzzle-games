@@ -244,7 +244,7 @@ function draw() {
             strokeWeight(3);
             noFill();
             rect(piece.x, piece.y, piece.w, piece.h);
-        }
+        } ``
     }
 
     if (!gameOver) {
