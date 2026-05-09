@@ -143,8 +143,21 @@ function draw() {
             handSkeletons.push(landmarks2D);
 
             // 1. Cek Pinch Jari Tengah + Jempol (Trigger Puzzle)
+            // let dMiddle = dist(thumb.x, thumb.y, middle.x, middle.y);
+            // if (dMiddle < 0.05) pinchMiddleConf++;
+
+            // Ambil titik pergelangan tangan (wrist)
+            let wrist = hand[0];
+            let indexBase = hand[5];
+            // Kira "saiz tangan" sebagai rujukan skala
+            let handScale = dist(wrist.x, wrist.y, indexBase.x, indexBase.y);
+
+            // Gunakan ambang (threshold) yang bergantung pada skala tangan
+            let threshold = handScale * 0.4; // 40% dari saiz tangan
+
             let dMiddle = dist(thumb.x, thumb.y, middle.x, middle.y);
-            if (dMiddle < 0.05) pinchMiddleConf++;
+            if (dMiddle < threshold) pinchMiddleConf++;
+            // ... dan seterusnya untuk dIndex
             else pinchMiddleConf = 0;
 
             if (pinchMiddleConf > 5) {
@@ -226,6 +239,7 @@ function draw() {
     for (let piece of puzzlePieces) {
         if (piece !== selectedPiece) {
             image(piece.img, piece.x, piece.y, piece.w, piece.h);
+            // Garis tepi kepingan yang tidak dipilih
             stroke(piece.currentGridX === piece.correctGridX && piece.currentGridY === piece.correctGridY ? color(0, 255, 0, 150) : color(255, 255, 255, 150));
             strokeWeight(3);
             noFill();
@@ -233,7 +247,56 @@ function draw() {
         }
     }
 
-    // Smooth movement for pieces
+    if (!gameOver) {
+        if (indexPinchActive) {
+            // Kunci kepingan hanya jika belum ada yang dibawa
+            if (selectedPiece === null && !wasPinching && pinchIndexHold > 5) {
+                for (let i = puzzlePieces.length - 1; i >= 0; i--) {
+                    let p = puzzlePieces[i];
+                    const grabMargin = 40;
+                    if (interactionX > p.x - grabMargin && interactionX < p.x + p.w + grabMargin && interactionY > p.y - grabMargin && interactionY < p.y + p.h + grabMargin) {
+                        selectedPiece = p;
+                        selectedPieceOffsetX = interactionX - p.x;
+                        selectedPieceOffsetY = interactionY - p.y;
+                        break;
+                    }
+                }
+            }
+
+            // PERBAIKAN: Gambar kepingan yang sedang dibawa TANPA rect putih/cyan yang menutupi
+            if (selectedPiece) {
+                selectedPiece.x = interactionX - selectedPieceOffsetX;
+                selectedPiece.y = interactionY - selectedPieceOffsetY;
+
+                // Gambar kepingan aslinya agar tetap terlihat jelas
+                image(selectedPiece.img, selectedPiece.x, selectedPiece.y, selectedPiece.w, selectedPiece.h);
+
+                // Hanya beri outline tipis berwarna cyan agar tidak "blank" putih
+                stroke(0, 255, 255);
+                strokeWeight(2);
+                noFill();
+                rect(selectedPiece.x, selectedPiece.y, selectedPiece.w, selectedPiece.h);
+
+                // TAMBAHAN: Indikator Lingkaran Cyan di atas puzzle (titik pinch)
+                push();
+                noFill();
+                stroke(0, 255, 255); // Warna Cyan
+                strokeWeight(4);
+                ellipse(interactionX, interactionY, 35, 35); // Lingkaran di titik jepitan jari
+
+                // Efek glow lingkaran
+                stroke(0, 255, 255, 100);
+                strokeWeight(8);
+                ellipse(interactionX, interactionY, 42, 42);
+                pop();
+            }
+        }
+        else if (selectedPiece && pinchIndexRelease > 3) {
+            executeSwap();
+        }
+    }
+
+    // // Smooth movement for pieces
     for (let piece of puzzlePieces) {
         if (piece !== selectedPiece) {
             piece.x = lerp(piece.x, piece.targetX, 0.1);
@@ -245,35 +308,6 @@ function draw() {
         drawHandSkeleton(skeleton);
     }
 
-    if (!gameOver) {
-        if (indexPinchActive) {
-            // Kunci kepingan hanya jika belum ada yang dibawa
-            if (selectedPiece === null && !wasPinching && pinchIndexHold > 5) {
-                for (let i = puzzlePieces.length - 1; i >= 0; i--) {
-                    let p = puzzlePieces[i];
-                    const grabMargin = 20;
-                    if (interactionX > p.x - grabMargin && interactionX < p.x + p.w + grabMargin && interactionY > p.y - grabMargin && interactionY < p.y + p.h + grabMargin) {
-                        selectedPiece = p;
-                        selectedPieceOffsetX = interactionX - p.x;
-                        selectedPieceOffsetY = interactionY - p.y;
-                        break;
-                    }
-                }
-            }
-
-            if (selectedPiece) {
-                selectedPiece.x = interactionX - selectedPieceOffsetX;
-                selectedPiece.y = interactionY - selectedPieceOffsetY;
-                image(selectedPiece.img, selectedPiece.x, selectedPiece.y, selectedPiece.w, selectedPiece.h);
-                stroke(0, 255, 255);
-                rect(selectedPiece.x, selectedPiece.y, selectedPiece.w, selectedPiece.h);
-            }
-        }
-        else if (selectedPiece && pinchIndexRelease > 3) {
-            // Swap saat pinch telunjuk dilepas
-            executeSwap();
-        }
-    }    // Logika Game Over & Restart (Bisa menggunakan Pinch Tengah atau Telunjuk)
     if (gameOver) {
         drawGameOver(middlePinchActive || indexPinchActive, interactionX, interactionY);
     } else if (puzzlePieces.length > 0 && puzzlePieces.every(p => p.currentGridX === p.correctGridX && p.currentGridY === p.correctGridY)) {
