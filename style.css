@@ -1,0 +1,50 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    height: 100vh;
+}
+
+.top-container {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.title {
+    color: cyan;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    text-transform: uppercase;
+}
+
+.timer {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    padding: 16px;
+    border: 1px solid white;
+    border-radius: 90%;
+}
+
+canvas {
+    border: 2px solid cyan;
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.25);
+    border-radius: 16px;
+    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+canvas:hover {
+    box-shadow: 0 0 60px rgba(0, 255, 255, 0.4);
+    border-color: rgba(0, 255, 255, 0.9);
+}
